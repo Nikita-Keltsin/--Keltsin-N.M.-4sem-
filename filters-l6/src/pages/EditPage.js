@@ -1,5 +1,5 @@
-import { api } from '../api.js';
-import { filterUrls } from '../filterUrls.js';
+import { api } from '../modules/api.js';
+import { filterUrls } from '../modules/filterUrls.js';
 
 /**
  * EditPage — страница добавления / редактирования фильтра.
@@ -94,59 +94,62 @@ export class EditPage {
                         value="${filter ? this._escape(filter.imageUrl) : ''}">
                 </div>
 
-                <div id="save-error" style="display:none; color:red; font-size:1rem; padding: 10px;"></div>
+                <div id="save-error" style="display:none; color:red; font-size:1rem; padding: 10px; text-align: center;"></div>
 
                 <button id="save-btn" class="my-btn execute" style="width: 100%; height: 60px; font-size: 1.3rem; margin-top: 10px;">
-                    💾 Сохранить
+                    💾 Сохранить (Fetch)
                 </button>
 
             </div>
         `;
 
+        // Привязываем метод handleSave к кнопке
         document.getElementById('save-btn').addEventListener('click', () => this.handleSave());
     }
 
+    // НОВЫЙ МЕТОД ДЛЯ ЛР №6: Асинхронное сохранение через API
     async handleSave() {
-        const name        = document.getElementById('field-name').value.trim();
-        const type        = document.getElementById('field-type').value.trim();
-        const description = document.getElementById('field-description').value.trim();
-        const imageUrl    = document.getElementById('field-imageUrl').value.trim();
-        const errorDiv    = document.getElementById('save-error');
+        const errorDiv = document.getElementById('save-error');
+        const saveBtn = document.getElementById('save-btn');
+        errorDiv.style.display = 'none';
 
-        if (!name || !type || !description) {
+        // 1. Собираем данные из твоих инпутов
+        const payload = {
+            name: document.getElementById('field-name').value.trim(),
+            type: document.getElementById('field-type').value.trim(),
+            description: document.getElementById('field-description').value.trim(),
+            imageUrl: document.getElementById('field-imageUrl').value.trim()
+        };
+
+        // Базовая проверка, чтобы не отправить пустышку
+        if (!payload.name || !payload.type) {
+            errorDiv.textContent = 'Поля "Название" и "Тип" обязательны для заполнения!';
             errorDiv.style.display = 'block';
-            errorDiv.textContent = 'Заполните поля: Название, Тип и Описание.';
             return;
         }
 
-        errorDiv.style.display = 'none';
-        const saveBtn = document.getElementById('save-btn');
-        saveBtn.disabled = true;
-        saveBtn.textContent = 'Сохранение...';
-
-        const body = { name, type, description, imageUrl };
-
         try {
-            let status;
-            if (this.isEditMode) {
-                ({ status } = await api.patch(filterUrls.updateFilterById(this.id), body));
-            } else {
-                ({ status } = await api.post(filterUrls.createFilter(), body));
-            }
+            saveBtn.disabled = true;
+            saveBtn.textContent = '⏳ Сохранение...';
 
-            if (status === 200 || status === 201) {
-                this.navigate('main');
+            // 2. Логика отправки через fetch (api.js)
+            if (this.isEditMode) {
+                // Редактируем существующий фильтр (PATCH)
+                await api.patch(filterUrls.updateFilterById(this.id), payload);
             } else {
-                errorDiv.style.display = 'block';
-                errorDiv.textContent = `Ошибка сервера (статус: ${status}).`;
-                saveBtn.disabled = false;
-                saveBtn.textContent = '💾 Сохранить';
+                // Создаем новый фильтр (POST)
+                await api.post(filterUrls.createFilter(), payload);
             }
-        } catch (err) {
+            
+            // 3. Возвращаемся на главную страницу после успеха
+            this.navigate('main');
+            
+        } catch (error) {
+            console.error('Ошибка сохранения:', error);
+            errorDiv.textContent = 'Ошибка сети. Проверьте запущен ли бэкенд.';
             errorDiv.style.display = 'block';
-            errorDiv.textContent = `Ошибка сети: ${err.message}`;
             saveBtn.disabled = false;
-            saveBtn.textContent = '💾 Сохранить';
+            saveBtn.textContent = '💾 Сохранить (Fetch)';
         }
     }
 
