@@ -1,6 +1,6 @@
 import { FilterCard } from '../components/FilterCard.js';
-import { api } from '../api.js';
-import { filterUrls } from '../filterUrls.js';
+import { api } from '../modules/api.js';
+import { filterUrls } from '../modules/filterUrls.js';
 
 export class MainPage {
     constructor(root, navigateFunc) {

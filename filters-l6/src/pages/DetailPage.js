@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { api } from '../api.js';
-import { filterUrls } from '../filterUrls.js';
+import { api } from '../modules/api.js';
+import { filterUrls } from '../modules/filterUrls.js';
 
 export class DetailPage {
     constructor(root, navigateFunc, id) {
