@@ -1,7 +1,4 @@
 class Api {
-    /**
-     * Внутренний метод — выполняет fetch и возвращает {data, status}.
-     */
     async _request(url, options = {}) {
         const response = await fetch(url, options);
  
