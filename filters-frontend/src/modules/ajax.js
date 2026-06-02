@@ -10,7 +10,6 @@ class Ajax {
         xhr.send();
  
         xhr.onreadystatechange = () => {
-            // readyState === 4: ответ полностью получен
             if (xhr.readyState === 4) {
                 this._handleResponse(xhr, callback);
             }

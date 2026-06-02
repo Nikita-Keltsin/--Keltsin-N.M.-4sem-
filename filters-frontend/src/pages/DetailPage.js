@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { ajax } from '../ajax.js';
-import { filterUrls } from '../filterUrls.js';
+import { ajax } from '../modules/ajax.js';
+import { filterUrls } from '../modules/filterUrls.js';
  
 /**
  * DetailPage — страница детального просмотра.
