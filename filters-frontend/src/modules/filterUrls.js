@@ -1,30 +1,25 @@
-// src/modules/filterUrls.js
-
-class FilterUrls {
+export class FilterUrls {
     constructor() {
-        this.baseUrl = 'http://localhost:3000'; // Порт твоего бэкенда Express
+        this.baseUrl = 'http://localhost:3000';
     }
-
-
-    getFilters() {
-        return `${this.baseUrl}/digitalFilters`;
+    getFilters(query = '') {
+        let url = `${this.baseUrl}/digitalFilters`;
+        if (query) {
+            url += `?name_like=${encodeURIComponent(query)}`;
+        }
+        return url;
     }
-   
     getFilterById(id) {
         return `${this.baseUrl}/digitalFilters/${id}`;
     }
-
     createFilter() {
         return `${this.baseUrl}/digitalFilters`;
     }
-
-    removeFilterById(id) {
+    deleteFilter(id) {
         return `${this.baseUrl}/digitalFilters/${id}`;
     }
-
-    updateFilterById(id) {
+    updateFilter(id) {
         return `${this.baseUrl}/digitalFilters/${id}`;
     }
 }
-
 export const filterUrls = new FilterUrls();
